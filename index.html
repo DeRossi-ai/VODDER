@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VODDER</title>
   <link rel="icon" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi6SJnuQfpMwOg2daF5iM5ClRtSPH8My3TIAH4IrbvCyecqi91elA6Tqu5YIFkIa_rW85qVcD_oJZwL4iRUEvTa__VjhpNV4wClV9bdQ67YIGOPMgAz-CV7Mrq-FELgIajXvynYvq9expJEKLEpQ95qzGXWodGlhW1wPYowOzcjsOpbAkO9aj8MU2YnBes/s1080/Posts-Photoroom.png" type="image/png">
   <style>
@@ -31,15 +31,10 @@
       border-radius: 10px;
     }
     section {
-      margin-bottom: 40px;
+      margin-bottom: 30px;
     }
     h2 {
       color: #f39c12;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
-    }
-    h3 {
-      color: #e67e22;
     }
     ul {
       list-style: none;
@@ -71,76 +66,101 @@
   </a>
 </header>
 
-<main>
-  <!-- Sección US -->
-  <section>
-    <h2>US News</h2>
-    <h3>General News</h3>
-    <ul id="rss-feed-us-general"></ul>
-    <h3>Finance</h3>
-    <ul id="rss-feed-us-finance"></ul>
-    <h3>Entertainment</h3>
-    <ul id="rss-feed-us-entertainment"></ul>
-    <h3>Sports</h3>
-    <ul id="rss-feed-us-sports"></ul>
-  </section>
-
-  <!-- Sección UK -->
-  <section>
-    <h2>UK News</h2>
-    <h3>General News</h3>
-    <ul id="rss-feed-uk-general"></ul>
-    <h3>Finance</h3>
-    <ul id="rss-feed-uk-finance"></ul>
-    <h3>Entertainment</h3>
-    <ul id="rss-feed-uk-entertainment"></ul>
-    <h3>Sports</h3>
-    <ul id="rss-feed-uk-sports"></ul>
-  </section>
-
-  <!-- Sección Canada -->
-  <section>
-    <h2>Canada News</h2>
-    <h3>General News</h3>
-    <ul id="rss-feed-ca-general"></ul>
-    <h3>Finance</h3>
-    <ul id="rss-feed-ca-finance"></ul>
-    <h3>Entertainment</h3>
-    <ul id="rss-feed-ca-entertainment"></ul>
-    <h3>Sports</h3>
-    <ul id="rss-feed-ca-sports"></ul>
-  </section>
-
-  <!-- Sección Australia -->
-  <section>
-    <h2>Australia News</h2>
-    <h3>General News</h3>
-    <ul id="rss-feed-au-general"></ul>
-    <h3>Finance</h3>
-    <ul id="rss-feed-au-finance"></ul>
-    <h3>Entertainment</h3>
-    <ul id="rss-feed-au-entertainment"></ul>
-    <h3>Sports</h3>
-    <ul id="rss-feed-au-sports"></ul>
-  </section>
-
-  <!-- Sección New Zealand -->
-  <section>
-    <h2>New Zealand News</h2>
-    <h3>General News</h3>
-    <ul id="rss-feed-nz-general"></ul>
-    <h3>Finance</h3>
-    <ul id="rss-feed-nz-finance"></ul>
-    <h3>Entertainment</h3>
-    <ul id="rss-feed-nz-entertainment"></ul>
-    <h3>Sports</h3>
-    <ul id="rss-feed-nz-sports"></ul>
-  </section>
+<main id="main-content">
 </main>
 
 <footer>
   &copy; 2025 - VODDER
-::contentReference[oaicite:0]{index=0}
+</footer>
+
+<script>
+const feeds = [
+  { title: 'US News', rss: 'https://rss.app/feeds/5YZmYIMMzBrOWYu1.xml' },
+  { title: 'UK News', rss: 'https://rss.app/feeds/tN217kyaDYwl9g4X.xml' },
+  { title: 'Canada News', rss: 'https://rss.app/feeds/acgD7O2jEGJIP7wZ.xml' },
+  { title: 'Australia News', rss: 'https://rss.app/feeds/spJ8Ml67hSlX1O0S.xml' },
+  { title: 'New Zealand News', rss: 'https://rss.app/feeds/vwvli4NIH2SPkKLl.xml' },
+];
+
+const monetagLinks = [
+  'https://stenexeb.xyz/4/9067149',
+  'https://stenexeb.xyz/4/9067125',
+  'https://stenexeb.xyz/4/9067207',
+  'https://stenexeb.xyz/4/9067146'
+];
+
+function checkPopupBlocker() {
+  const test = window.open('', '', 'width=100,height=100');
+  if (!test || test.closed || typeof test.closed == 'undefined') {
+    document.body.innerHTML = `
+      <div style="text-align:center;padding:40px;color:white;background:#121212;font-family:sans-serif">
+        <h1>Please allow pop-ups and ads</h1>
+        <p>This site is funded by non-intrusive advertising. To access the content, please allow pop-ups in your browser settings, and reload the site</p>
+      </div>
+    `;
+    return false;
+  } else {
+    test.close();
+    return true;
+  }
+}
+
+function redirectWithMonetag(finalUrl) {
+  const allLinks = [...monetagLinks, finalUrl];
+  let i = 0;
+  function openNext() {
+    if (i < allLinks.length) {
+      window.open(allLinks[i], '_blank');
+      i++;
+      setTimeout(openNext, 1000);
+    }
+  }
+  openNext();
+}
+
+async function loadRSSFeeds() {
+  const main = document.getElementById('main-content');
+  for (const feed of feeds) {
+    try {
+      const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feed.rss));
+      const data = await res.json();
+      const section = document.createElement('section');
+      const h2 = document.createElement('h2');
+      h2.textContent = feed.title;
+      const ul = document.createElement('ul');
+      data.items.slice(0, 10).forEach(item => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.textContent = item.title;
+        a.href = '#';
+        a.onclick = (e) => {
+          e.preventDefault();
+          redirectWithMonetag(item.link);
+        };
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+      section.appendChild(h2);
+      section.appendChild(ul);
+      main.appendChild(section);
+    } catch (err) {
+      console.error('Error loading feed:', feed.title, err);
+    }
+  }
+}
+
+if (checkPopupBlocker()) {
+  loadRSSFeeds();
+  setInterval(() => {
+    document.getElementById('main-content').innerHTML = '';
+    loadRSSFeeds();
+  }, 120000); // actualiza cada 2 minutos
+}
+</script>
+
+</body>
+</html>
+
  
 
 
