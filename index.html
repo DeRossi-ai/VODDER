@@ -86,6 +86,36 @@
     'https://stenexeb.xyz/4/9067146'
   ];
 
+  function checkPopupBlocker() {
+    const test = window.open('', '', 'width=100,height=100');
+    if (!test || test.closed || typeof test.closed == 'undefined') {
+      // Bloqueado
+      document.body.innerHTML = `
+        <div style="text-align:center;padding:40px;color:white;background:#121212;font-family:sans-serif">
+          <h1>Please allow pop-ups and ads</h1>
+          <p>This site is funded by non-intrusive advertising. To access the content, please allow pop-ups in your browser settings.</p>
+        </div>
+      `;
+      return false;
+    } else {
+      test.close();
+      return true;
+    }
+  }
+
+  function redirectWithMonetag(finalUrl) {
+    const allLinks = [...monetagLinks, finalUrl];
+    let i = 0;
+    function openNext() {
+      if (i < allLinks.length) {
+        window.open(allLinks[i], '_blank');
+        i++;
+        setTimeout(openNext, 1000);
+      }
+    }
+    openNext();
+  }
+
   async function loadRSS() {
     try {
       const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl));
@@ -105,28 +135,17 @@
         container.appendChild(li);
       });
     } catch (error) {
-      console.error('Error cargando el RSS:', error);
+      console.error('Error loading RSS:', error);
     }
   }
 
-  function redirectWithMonetag(finalUrl) {
-    const allLinks = [...monetagLinks, finalUrl];
-    let i = 0;
-
-    function openNext() {
-      if (i < allLinks.length) {
-        window.open(allLinks[i], '_blank');
-        i++;
-        setTimeout(openNext, 1000); // Espera 1 segundo antes de abrir la siguiente pestaña
-      }
-    }
-
-    openNext();
+  if (checkPopupBlocker()) {
+    loadRSS();
   }
-
-  loadRSS();
 </script>
-
+</body>
+</html>
+  
 
 </body>
 </html>
