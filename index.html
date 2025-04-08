@@ -112,20 +112,21 @@
   function redirectWithMonetag(finalUrl) {
     const allLinks = [...monetagLinks, finalUrl];
     let i = 0;
-    function next() {
+
+    function openNext() {
       if (i < allLinks.length) {
-        setTimeout(() => {
-          location.href = allLinks[i];
-          i++;
-          next();
-        }, 100);
+        window.open(allLinks[i], '_blank');
+        i++;
+        setTimeout(openNext, 1000); // Espera 1 segundo antes de abrir la siguiente pestaña
       }
     }
-    next();
+
+    openNext();
   }
 
   loadRSS();
 </script>
+
 
 </body>
 </html>
